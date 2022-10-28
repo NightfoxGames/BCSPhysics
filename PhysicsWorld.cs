@@ -60,7 +60,7 @@ namespace BCSP
         {
             body = null;
 
-            if(index < 0 || index >= this.bodyList.Count)
+            if (index < 0 || index >= this.bodyList.Count)
             {
                 return false;
             }
@@ -128,6 +128,25 @@ namespace BCSP
             }
         }
 
+        /// <summary>
+        /// Changes The Gravity, Default Gravity = 0f, -9.81f
+        /// </summary>
+        /// <param name="newGravity"></param>
+        /// <param name="errorMessage"></param>
+        /// <returns></returns>
+        public bool ChangeGravity(BasicVector newGravity, out string errorMessage)
+        {
+            errorMessage = "";
+            if (gravity.X > 20 || gravity.X < -20 || gravity.Y > 20 || gravity.Y < -20)
+            {
+                errorMessage = "Not Able To Go That High";
+                return false;
+            }
+            gravity = newGravity;
+            return true;
+        }
+
+
         public void StepBodies(float time, int totalIterations)
         {
             for (int i = 0; i < this.bodyList.Count; i++)
@@ -192,7 +211,7 @@ namespace BCSP
             this.contactList[0] = contact1;
             this.contactList[1] = contact2;
 
-            for(int i = 0; i < contactCount; i++)
+            for (int i = 0; i < contactCount; i++)
             {
                 this.impulseList[i] = BasicVector.Zero;
                 this.raList[i] = BasicVector.Zero;
@@ -213,8 +232,8 @@ namespace BCSP
                 BasicVector angularLinearVelocityA = raPerp * bodyA.AngularVelocity;
                 BasicVector angularLinearVelocityB = rbPerp * bodyB.AngularVelocity;
 
-                BasicVector relativeVelocity = 
-                    (bodyB.LinearVelocity + angularLinearVelocityB) - 
+                BasicVector relativeVelocity =
+                    (bodyB.LinearVelocity + angularLinearVelocityB) -
                     (bodyA.LinearVelocity + angularLinearVelocityA);
 
                 float contactVelocityMag = BasicMath.Dot(relativeVelocity, normal);
@@ -227,8 +246,8 @@ namespace BCSP
                 float raPerpDotN = BasicMath.Dot(raPerp, normal);
                 float rbPerpDotN = BasicMath.Dot(rbPerp, normal);
 
-                float denom = bodyA.InvMass + bodyB.InvMass + 
-                    (raPerpDotN * raPerpDotN) * bodyA.InvInertia + 
+                float denom = bodyA.InvMass + bodyB.InvMass +
+                    (raPerpDotN * raPerpDotN) * bodyA.InvInertia +
                     (rbPerpDotN * rbPerpDotN) * bodyB.InvInertia;
 
                 float j = -(1f + e) * contactVelocityMag;
@@ -239,7 +258,7 @@ namespace BCSP
                 impulseList[i] = impulse;
             }
 
-            for(int i = 0; i < contactCount; i++)
+            for (int i = 0; i < contactCount; i++)
             {
                 BasicVector impulse = impulseList[i];
                 BasicVector ra = raList[i];

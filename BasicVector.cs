@@ -15,6 +15,8 @@ namespace BCSP
             this.Y = y;
         }
 
+        
+
         public static BasicVector operator +(BasicVector a, BasicVector b)
         {
             return new BasicVector(a.X + b.X, a.Y + b.Y);
@@ -56,6 +58,16 @@ namespace BCSP
         {
             return this.X == other.X && this.Y == other.Y;
         }
+
+        public bool MoreThan(BasicVector other)
+        {
+            return this.X > other.X && this.Y > other.Y;
+        }
+        public bool LessThan(BasicVector other)
+        {
+            return this.X < other.X && this.Y < other.Y;
+        }
+        
 
         public override bool Equals(object obj)
         {

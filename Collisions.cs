@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BCSP;
+using System;
 
 namespace BCSP
 {
@@ -13,11 +14,11 @@ namespace BCSP
             float abLenSq = BasicMath.LengthSquared(ab);
             float d = proj / abLenSq;
 
-            if(d <= 0f)
+            if (d <= 0f)
             {
                 cp = a;
             }
-            else if(d >= 1f)
+            else if (d >= 1f)
             {
                 cp = b;
             }
@@ -31,7 +32,7 @@ namespace BCSP
 
         public static bool IntersectAABBs(AABB a, AABB b)
         {
-            if(a.Max.X <= b.Min.X || b.Max.X <= a.Min.X ||
+            if (a.Max.X <= b.Min.X || b.Max.X <= a.Min.X ||
                 a.Max.Y <= b.Min.Y || b.Max.Y <= a.Min.Y)
             {
                 return false;
@@ -41,8 +42,8 @@ namespace BCSP
         }
 
         public static void FindContactPoints(
-            RigidBody bodyA, RigidBody bodyB, 
-            out BasicVector contact1, out BasicVector contact2, 
+            RigidBody bodyA, RigidBody bodyB,
+            out BasicVector contact1, out BasicVector contact2,
             out int contactCount)
         {
             contact1 = BasicVector.Zero;
@@ -81,7 +82,7 @@ namespace BCSP
         }
 
         private static void FindPolygonsContactPoints(
-            BasicVector[] verticesA, BasicVector[] verticesB, 
+            BasicVector[] verticesA, BasicVector[] verticesB,
             out BasicVector contact1, out BasicVector contact2, out int contactCount)
         {
             contact1 = BasicVector.Zero;
@@ -90,18 +91,18 @@ namespace BCSP
 
             float minDistSq = float.MaxValue;
 
-            for(int i = 0; i < verticesA.Length; i++)
+            for (int i = 0; i < verticesA.Length; i++)
             {
                 BasicVector p = verticesA[i];
 
-                for(int j = 0; j < verticesB.Length; j++)
+                for (int j = 0; j < verticesB.Length; j++)
                 {
                     BasicVector va = verticesB[j];
                     BasicVector vb = verticesB[(j + 1) % verticesB.Length];
 
                     Collisions.PointSegmentDistance(p, va, vb, out float distSq, out BasicVector cp);
 
-                    if(BasicMath.NearlyEqual(distSq, minDistSq))
+                    if (BasicMath.NearlyEqual(distSq, minDistSq))
                     {
                         if (!BasicMath.NearlyEqual(cp, contact1))
                         {
@@ -109,7 +110,7 @@ namespace BCSP
                             contactCount = 2;
                         }
                     }
-                    else if(distSq < minDistSq)
+                    else if (distSq < minDistSq)
                     {
                         minDistSq = distSq;
                         contactCount = 1;
@@ -148,22 +149,22 @@ namespace BCSP
         }
 
         private static void FindCirclePolygonContactPoint(
-            BasicVector circleCenter, float circleRadius, 
-            BasicVector polygonCenter, BasicVector[] polygonVertices, 
+            BasicVector circleCenter, float circleRadius,
+            BasicVector polygonCenter, BasicVector[] polygonVertices,
             out BasicVector cp)
         {
             cp = BasicVector.Zero;
 
             float minDistSq = float.MaxValue;
 
-            for(int i = 0; i < polygonVertices.Length; i++)
+            for (int i = 0; i < polygonVertices.Length; i++)
             {
                 BasicVector va = polygonVertices[i];
                 BasicVector vb = polygonVertices[(i + 1) % polygonVertices.Length];
 
                 Collisions.PointSegmentDistance(circleCenter, va, vb, out float distSq, out BasicVector contact);
 
-                if(distSq < minDistSq)
+                if (distSq < minDistSq)
                 {
                     minDistSq = distSq;
                     cp = contact;
@@ -194,6 +195,7 @@ namespace BCSP
                         bodyA.Position, bodyA.GetTransformedVertices(),
                         bodyB.Position, bodyB.GetTransformedVertices(),
                         out normal, out depth);
+
                 }
                 else if (shapeTypeB is ShapeType.Circle)
                 {
@@ -203,6 +205,8 @@ namespace BCSP
                         out normal, out depth);
 
                     normal = -normal;
+
+
                     return result;
                 }
             }
@@ -214,6 +218,7 @@ namespace BCSP
                         bodyA.Position, bodyA.Radius,
                         bodyB.Position, bodyB.GetTransformedVertices(),
                         out normal, out depth);
+
                 }
                 else if (shapeTypeB is ShapeType.Circle)
                 {
@@ -221,9 +226,9 @@ namespace BCSP
                         bodyA.Position, bodyA.Radius,
                         bodyB.Position, bodyB.Radius,
                         out normal, out depth);
+
                 }
             }
-
             return false;
         }
 
@@ -301,12 +306,12 @@ namespace BCSP
             int result = -1;
             float minDistance = float.MaxValue;
 
-            for(int i = 0; i < vertices.Length; i++)
+            for (int i = 0; i < vertices.Length; i++)
             {
                 BasicVector v = vertices[i];
                 float distance = BasicMath.Distance(v, circleCenter);
 
-                if(distance < minDistance)
+                if (distance < minDistance)
                 {
                     minDistance = distance;
                     result = i;
@@ -327,7 +332,7 @@ namespace BCSP
             min = BasicMath.Dot(p1, axis);
             max = BasicMath.Dot(p2, axis);
 
-            if(min > max)
+            if (min > max)
             {
                 // swap the min and max values.
                 float t = min;
@@ -408,19 +413,19 @@ namespace BCSP
             min = float.MaxValue;
             max = float.MinValue;
 
-            for(int i = 0; i < vertices.Length; i++)
+            for (int i = 0; i < vertices.Length; i++)
             {
                 BasicVector v = vertices[i];
                 float proj = BasicMath.Dot(v, axis);
 
-                if(proj < min) { min = proj; }
-                if(proj > max) { max = proj; }
+                if (proj < min) { min = proj; }
+                if (proj > max) { max = proj; }
             }
         }
 
         public static bool IntersectCircles(
-            BasicVector centerA, float radiusA, 
-            BasicVector centerB, float radiusB, 
+            BasicVector centerA, float radiusA,
+            BasicVector centerB, float radiusB,
             out BasicVector normal, out float depth)
         {
             normal = BasicVector.Zero;
@@ -429,7 +434,7 @@ namespace BCSP
             float distance = BasicMath.Distance(centerA, centerB);
             float radii = radiusA + radiusB;
 
-            if(distance >= radii)
+            if (distance >= radii)
             {
                 return false;
             }

@@ -4,7 +4,7 @@ namespace BCSP
 {
     public enum ShapeType
     {
-        Circle = 0, 
+        Circle = 0,
         Box = 1
     }
 
@@ -58,8 +58,9 @@ namespace BCSP
             get { return this.angularVelocity; }
             internal set { this.angularVelocity = value; }
         }
+        
 
-        private RigidBody(float density, float mass, float inertia, float restitution, float area, 
+        private RigidBody(float density, float mass, float inertia, float restitution, float area,
             bool isStatic, float radius, float width, float height, BasicVector[] vertices, ShapeType shapeType)
         {
             this.position = BasicVector.Zero;
@@ -81,7 +82,7 @@ namespace BCSP
             this.Width = width;
             this.Height = height;
 
-            if(this.ShapeType is ShapeType.Box)
+            if (this.ShapeType is ShapeType.Box)
             {
                 this.vertices = vertices;
                 this.transformedVertices = new BasicVector[this.vertices.Length];
@@ -126,11 +127,11 @@ namespace BCSP
 
         public BasicVector[] GetTransformedVertices()
         {
-            if(this.transformUpdateRequired)
+            if (this.transformUpdateRequired)
             {
                 BasicTransform transform = new BasicTransform(this.position, this.angle);
 
-                for(int i = 0; i < this.vertices.Length; i++)
+                for (int i = 0; i < this.vertices.Length; i++)
                 {
                     BasicVector v = this.vertices[i];
                     this.transformedVertices[i] = BasicVector.Transform(v, transform);
@@ -191,7 +192,7 @@ namespace BCSP
 
         internal void Step(float time, BasicVector gravity, int iterations)
         {
-            if(this.IsStatic)
+            if (this.IsStatic)
             {
                 return;
             }
@@ -201,8 +202,8 @@ namespace BCSP
             // force = mass * acc
             // acc = force / mass;
 
-            //BasicVector acceleration = this.force / this.Mass;
-            //this.linearVelocity += acceleration * time;
+            BasicVector acceleration = this.force / this.Mass;
+            this.linearVelocity += acceleration * time;
 
 
             this.linearVelocity += gravity * time;
@@ -247,6 +248,10 @@ namespace BCSP
         {
             this.force = amount;
         }
+        public void SetVelociy(BasicVector amount)
+        {
+            this.linearVelocity = amount;
+        }
 
         public static bool CreateCircleBody(float radius, float density, bool isStatic, float restitution, out RigidBody body, out string errorMessage)
         {
@@ -255,13 +260,13 @@ namespace BCSP
 
             float area = radius * radius * MathF.PI;
 
-            if(area < PhysicsWorld.MinBodySize)
+            if (area < PhysicsWorld.MinBodySize)
             {
                 errorMessage = $"Circle radius is too small. Min circle area is {PhysicsWorld.MinBodySize}.";
                 return false;
             }
 
-            if(area > PhysicsWorld.MaxBodySize)
+            if (area > PhysicsWorld.MaxBodySize)
             {
                 errorMessage = $"Circle radius is too large. Max circle area is {PhysicsWorld.MaxBodySize}.";
                 return false;
